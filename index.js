@@ -3,15 +3,29 @@ import { createApp } from 'vue/dist/vue.esm-browser.js'
 // Options API: template option and data option
 const app = createApp({
     template: `
-    <p>{{ person }}</p>
+    <button v-on:click="increment(5)">Increment</button>
+    <p>{{ count }}</p>
+    
+    <div v-if="isEven()">
+        Even
+    </div>
+    <div v-else>
+        Odd
+    </div>
     `,
     data(){
         return {
-            msg: 'world',
-            person: {
-                name: 'Sidharth',
-                age: 19
-            }
+            count: 0 
+        }
+    },
+    methods: {
+        increment(val) {
+            this.count += val
+        },
+        isEven() {
+            return  this.count % 2 === 0
         }
     }
 }).mount('#app')
+
+window.app = app
