@@ -12,10 +12,16 @@ const app = createApp({
     <div v-else>
         Odd
     </div>
+    <div v-for="number in numbers">
+        <div v-if="number===5">
+            {{ number }}   
+        </div>
+    </div>
     `,
     data(){
         return {
-            count: 0 
+            count: 0,
+            numbers: [1, 2, 3, 4, 5, 6]
         }
     },
     methods: {
