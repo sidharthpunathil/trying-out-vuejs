@@ -3,9 +3,10 @@ import { createApp } from 'vue/dist/vue.esm-browser.js'
 // Options API: template option and data option
 // v-model
 // computed property
+// v-on shorthand @
 const app = createApp({
     template: `
-    <button v-on:click="increment(5)">Increment</button>
+    <button @:click="increment(1)">Increment</button>
     <p>{{ count }}</p>
     
     <div v-if="isEven()">
@@ -14,8 +15,10 @@ const app = createApp({
     <div v-else>
         Odd
     </div>
-    <div v-for="number in evenList">
-        {{ number }} 
+    <div v-for="number in numbers">
+        <div :class="getClass(number)">
+            {{ number }} 
+        </div>
     </div>
     `,
     computed: {
@@ -30,11 +33,18 @@ const app = createApp({
         }
     },
     methods: {
+        getClass(number)
+        {
+            if(this.isEven(number)) {
+                return 'blue'
+            }
+            return 'green'
+        },
         increment(value) {
             this.count += value
         },
-        isEven() {
-            return this.count % 2 === 0
+        isEven(number) {
+            return number % 2 === 0
         }
     }
 }).mount('#app')
