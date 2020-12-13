@@ -13,14 +13,17 @@ const Num = {
         number: {
             type: Number,
             required: true
-        },
+        }
     },
     template: `
-    <div :class="getClass(number)">
+    <button :class="getClass(number)" @click="handleClick">
         {{ number }} 
-    </div>
+    </button>
     `,
     methods: {
+        handleClick(){
+            this.$emit('chosen', this.number)
+        },
         isEven(number) {
             return number % 2 === 0
         },
@@ -39,39 +42,20 @@ const app = createApp({
         Num
     },
     template: `
-    <button @:click="increment(1)">Increment</button>
-    <p>{{ count }}</p>
-    
-    <num v-for="mynumber in numbers" :number="mynumber"/>
-    
-    <input v-model="value" />
-    {{ value }}
-    <div v-if="error">{{ error }}</div>
+        <num v-for="number in numbers" :number="number" @chosen="putInArray" />
+        <h3>Clicked numbers</h3>
+        <num v-for="number in clickedNumbers" :number="number" />
     `,
-    computed: {
-        error() {
-            if (this.value.length < 7) {
-                return "Too short"
-            }
-            if (this.value.length > 14) {
-                return "too long"
-            }
-        }
-    },
     data(){
         return {
-            username: 'user',
-            count: 0,
             numbers: [1, 2, 3, 4, 5, 6],
-            value: 'User'
+            clickedNumbers: []
         }
     },
     methods: {
-        input($event) {
-            this.value = $event.target.value
-        },
-        increment(value) {
-            this.count += value
+        putInArray(number){
+            console.log(number)
+            this.clickedNumbers.push(number)
         },
     }
 }).mount('#app')
