@@ -8,39 +8,47 @@ import { createApp } from 'vue/dist/vue.esm-browser.js'
 //input @input="input" :value="value"/>input  
 //<input v-model="value" />
 
-const hello = {
-    template: `
-    <h3>Hello, people</h3>
-    `
-}
-const app = createApp({
-    components: {
-        hello
+const Num = {
+    props: {
+        number: {
+            type: Number,
+            required: true
+        },
     },
     template: `
-    <hello />
+    <div :class="getClass(number)">
+        {{ number }} 
+    </div>
+    `,
+    methods: {
+        isEven(number) {
+            return number % 2 === 0
+        },
+        getClass(number)
+        {
+            if(this.isEven(number)) {
+                return 'blue'
+            }
+            return 'green'
+        }
+    }
+}
+
+const app = createApp({
+    components: {
+        Num
+    },
+    template: `
     <button @:click="increment(1)">Increment</button>
     <p>{{ count }}</p>
     
-    <div v-if="isEven()">
-        Even
-    </div>
-    <div v-else>
-        Odd
-    </div>
-    <div v-for="number in numbers">
-        <div :class="getClass(number)">
-            {{ number }} 
-        </div>
-    </div>
+    <num v-for="mynumber in numbers" :number="mynumber"/>
+    
     <input v-model="value" />
     {{ value }}
     <div v-if="error">{{ error }}</div>
     `,
     computed: {
-        evenList() {
-           return this.numbers.filter(this.isEven)
-        },
         error() {
             if (this.value.length < 7) {
                 return "Too short"
@@ -62,19 +70,9 @@ const app = createApp({
         input($event) {
             this.value = $event.target.value
         },
-        getClass(number)
-        {
-            if(this.isEven(number)) {
-                return 'blue'
-            }
-            return 'green'
-        },
         increment(value) {
             this.count += value
         },
-        isEven(number) {
-            return number % 2 === 0
-        }
     }
 }).mount('#app')
 
