@@ -6,8 +6,9 @@
         </div>
         <input 
             :id="name"
-            type="text"
-            v-model="value"
+            :type="type"
+            :value="value"
+            @input="input"
         />
     </div>
 </template>
@@ -20,23 +21,36 @@
                 required: true
             },
             rules: {
-                type: Object, // minimum and required
-            }
-        },
-        data() {
-            return {
-                value: ''
+                type: Object // minimum and required
+            },
+            value: {
+                type: String
+            },
+            type: {
+                type: String
             }
         },
         computed: {
             error() {
-               if (this.rules.required && !this.value=== 0){
+                return this.validate(this.value)
+            }
+        },
+        methods: {
+            validate(value) {
+               if (this.rules.required && !value === 0) {
                   return 'Required' 
                }
 
-               if(this.rules.min && this.value.length < this.rules.min){
+               if(this.rules.min && value.length < this.rules.min) {
                    return `Minimum length is ${this.rules.min}`
                }
+            },
+            input($evt) {
+                this.$emit('update', {
+                    value: $evt.target.value,
+                    name: this.name,
+                    valid: this.validate($evt.target.value) ? false : true
+                })
             }
         }
     }
