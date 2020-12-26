@@ -1,47 +1,47 @@
 <template>
-    <div class="cards">
-        <card v-for="(starter, index) in starters" :key="index">
+    <div>
+        <pokemon-card :pokemons="starters"
+        :selected="selected"
+        @pokemonClicked="fetchEvolutions"
+        />
 
-            <template v-slot:title>
-                {{starter.name}} 
-            </template>
-
-            <template v-slot:content>
-                <img :src="starter.sprite">
-            </template>
-
-            <template v-slot:description>
-                <div v-for="(type, index) in starter.types" :key="index">
-                    {{ type }}
-                </div>
-            </template>
-
-        </card>
+        <pokemon-card :pokemons="evolutions"
+        />
     </div>
 </template>
 
 <script>
 import Card from './Card.vue'
-const ids = [1, 4, 7]
+import PokemonCard from './PokemonCard.vue'
+const STARTER_IDS = [1, 4, 7]
 const api = 'https://pokeapi.co/api/v2/pokemon'
 export default {
     components: {
-        Card
+        Card,
+        PokemonCard
     },
-    created() {
-        this.fetchData()
+    async created() {
+        const starters = await this.fetchData(STARTER_IDS)
+        this.starters = starters;
     },
     data() {
         return {
-            starters: []
+            starters: [],
+            evolutions: [],
+            selected: null
         }
     },
     methods: {
-        async fetchData() {
+        async fetchEvolutions(pokemon) {
+            this.selected = pokemon.id
+            this.evolutions = await this.fetchData([pokemon.id + 1, pokemon.id + 2])
+        },
+        async fetchData(ids) {
             const responces = await Promise.all(ids.map(id => window.fetch(`${api}/${id}`)))
             const data = await Promise.all(responces.map(res => res.json()))
-            this.starters = data.map(datem => ({
+            return data.map(datem => ({
                 name: datem.name,
+                id: datem.id,
                 sprite: datem.sprites.other['official-artwork'].front_default,
                 types: datem.types.map(type => type.type.name)
             }))
@@ -51,10 +51,4 @@ export default {
 </script>
 
 <style  scoped>
-    .cards {
-        display: flex;
-    }
-    img {
-        width: 100%;
-    }
 </style>
